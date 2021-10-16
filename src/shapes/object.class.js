@@ -646,6 +646,15 @@
     absolutePositioned: false,
 
     /**
+     * When true, this object can be transformed by one side (unproportionally)
+     * when dragged on the corners that normally would not do that.
+     * @type Boolean
+     * @default
+     * @since fabric 4.0 // changed name and default value
+     */
+    uniformScaling: false,
+
+    /**
      * Constructor
      * @param {Object} [options] Options object
      */

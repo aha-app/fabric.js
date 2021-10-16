@@ -47,7 +47,8 @@
     var canvas = fabricObject.canvas, uniScaleKey = canvas.uniScaleKey,
         uniformIsToggled = eventData[uniScaleKey];
     return (canvas.uniformScaling && !uniformIsToggled) ||
-    (!canvas.uniformScaling && uniformIsToggled);
+    (!canvas.uniformScaling && uniformIsToggled) ||
+    fabricObject.uniformScaling;
   }
 
   /**
