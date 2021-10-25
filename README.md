@@ -5,6 +5,9 @@
 Changes from the upstream version:
 
 * Introduced uniformScaling at the object level.
+* On mouseup use the same control corner as the mouse down. This is to fix a
+  problem in cases where the mouseup is no longer over the control, e.g. because
+  the control position is constrained somehow and the mouse moves off the control.
 
 <!-- build/coverage status, climate -->
 

@@ -13054,10 +13054,10 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           shouldRender = true;
         }
         else {
-          var corner = target._findTargetCorner(
+          var corner = target.__corner; /*_findTargetCorner(
             this.getPointer(e, true),
             fabric.util.isTouchEvent(e)
-          );
+          );*/
           var control = target.controls[corner],
               mouseUpHandler = control && control.getMouseUpHandler(e, target, control);
           if (mouseUpHandler) {
