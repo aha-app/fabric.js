@@ -655,6 +655,13 @@
     uniformScaling: false,
 
     /**
+     * Select this shape only when it is fully contained in the dragged selection rectangle.
+     * @type Boolean
+     * @default
+     */
+    selectionFullyContained: false,
+
+    /**
      * Constructor
      * @param {Object} [options] Options object
      */

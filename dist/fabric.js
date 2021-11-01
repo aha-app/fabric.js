@@ -13740,7 +13740,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           y2 = y1 + this._groupSelector.top,
           selectionX1Y1 = new fabric.Point(min(x1, x2), min(y1, y2)),
           selectionX2Y2 = new fabric.Point(max(x1, x2), max(y1, y2)),
-          allowIntersect = !this.selectionFullyContained,
+          allowIntersect,
           isClick = x1 === x2 && y1 === y2;
       // we iterate reverse order to collect top first in case of click.
       for (var i = this._objects.length; i--; ) {
@@ -13749,6 +13749,8 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         if (!currentObject || !currentObject.selectable || !currentObject.visible) {
           continue;
         }
+
+        allowIntersect = !this.selectionFullyContained && !currentObject.selectionFullyContained;
 
         if ((allowIntersect && currentObject.intersectsWithRect(selectionX1Y1, selectionX2Y2, true)) ||
             currentObject.isContainedWithinRect(selectionX1Y1, selectionX2Y2, true) ||
@@ -14772,6 +14774,13 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @since fabric 4.0 // changed name and default value
      */
     uniformScaling: false,
+
+    /**
+     * Select this shape only when it is fully contained in the dragged selection rectangle.
+     * @type Boolean
+     * @default
+     */
+    selectionFullyContained: false,
 
     /**
      * Constructor
