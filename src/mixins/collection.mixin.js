@@ -166,5 +166,13 @@ fabric.Collection = {
       memo += current.complexity ? current.complexity() : 0;
       return memo;
     }, 0);
+  },
+
+  /**
+   * Returns the index of the object in the collection, -1 if the object 
+   * doesn't exist in the collection.
+   */
+  indexOf: function(object) {
+    return this._objects.indexOf(object);
   }
 };

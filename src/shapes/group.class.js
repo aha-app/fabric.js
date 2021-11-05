@@ -167,6 +167,7 @@
         this._objects.push(object);
         object.group = this;
         object._set('canvas', this.canvas);
+        object.fire("added");
       }
       this._calcBounds();
       this._updateObjectsCoords();
@@ -442,12 +443,16 @@
       var activeSelection = new fabric.ActiveSelection([]);
       activeSelection.set(options);
       activeSelection.type = 'activeSelection';
+      var groupIndex = canvas.indexOf(this);
       canvas.remove(this);
-      objects.forEach(function(object) {
+      // Reverse order so that objects are inserted back into the canvas in
+      // the same order.
+      for (var i = objects.length - 1; i >= 0; i--) {
+        var object = objects[i];
         object.group = activeSelection;
         object.dirty = true;
-        canvas.add(object);
-      });
+        canvas.insertAt(object, groupIndex);
+      }
       activeSelection.canvas = canvas;
       activeSelection._objects = objects;
       canvas._activeObject = activeSelection;

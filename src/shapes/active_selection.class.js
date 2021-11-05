@@ -63,7 +63,14 @@
       var newGroup = new fabric.Group([]);
       delete options.type;
       newGroup.set(options);
+      var firstIndex = null
       objects.forEach(function(object) {
+        // We record the *lowest* index of object in the group. We can't use 
+        // the highest index because in the case of dependent objects, removing
+        // one from the collection might also trigger removal of others
+        // changing all of the higher indexes.
+        var objectIndex = object.canvas.indexOf(object);
+        if (!firstIndex || objectIndex < firstIndex) firstIndex = objectIndex;
         object.canvas.remove(object);
         object.group = newGroup;
       });
@@ -72,7 +79,7 @@
         return newGroup;
       }
       var canvas = this.canvas;
-      canvas.add(newGroup);
+      canvas.insertAt(newGroup, firstIndex);
       canvas._activeObject = newGroup;
       newGroup.setCoords();
       return newGroup;

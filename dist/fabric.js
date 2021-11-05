@@ -521,6 +521,14 @@ fabric.Collection = {
       memo += current.complexity ? current.complexity() : 0;
       return memo;
     }, 0);
+  },
+
+  /**
+   * Returns the index of the object in the collection, -1 if the object 
+   * doesn't exist in the collection.
+   */
+  indexOf: function(object) {
+    return this._objects.indexOf(object);
   }
 };
 
@@ -19970,6 +19978,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         this._objects.push(object);
         object.group = this;
         object._set('canvas', this.canvas);
+        object.fire("added");
       }
       this._calcBounds();
       this._updateObjectsCoords();
@@ -20245,12 +20254,16 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       var activeSelection = new fabric.ActiveSelection([]);
       activeSelection.set(options);
       activeSelection.type = 'activeSelection';
+      var groupIndex = canvas.indexOf(this);
       canvas.remove(this);
-      objects.forEach(function(object) {
+      // Reverse order so that objects are inserted back into the canvas in
+      // the same order.
+      for (var i = objects.length - 1; i >= 0; i--) {
+        var object = objects[i];
         object.group = activeSelection;
         object.dirty = true;
-        canvas.add(object);
-      });
+        canvas.insertAt(object, groupIndex);
+      }
       activeSelection.canvas = canvas;
       activeSelection._objects = objects;
       canvas._activeObject = activeSelection;
@@ -20469,7 +20482,14 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       var newGroup = new fabric.Group([]);
       delete options.type;
       newGroup.set(options);
+      var firstIndex = null
       objects.forEach(function(object) {
+        // We record the *lowest* index of object in the group. We can't use 
+        // the highest index because in the case of dependent objects, removing
+        // one from the collection might also trigger removal of others
+        // changing all of the higher indexes.
+        var objectIndex = object.canvas.indexOf(object);
+        if (!firstIndex || objectIndex < firstIndex) firstIndex = objectIndex;
         object.canvas.remove(object);
         object.group = newGroup;
       });
@@ -20478,7 +20498,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         return newGroup;
       }
       var canvas = this.canvas;
-      canvas.add(newGroup);
+      canvas.insertAt(newGroup, firstIndex);
       canvas._activeObject = newGroup;
       newGroup.setCoords();
       return newGroup;
