@@ -35,6 +35,7 @@
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
+        this._objects[i].fire("group:added");
       }
 
       if (options.originX) {
