@@ -178,7 +178,7 @@
     drawBordersInGroup: function(ctx, options, styleOverride) {
       styleOverride = styleOverride || {};
       var bbox = fabric.util.sizeAfterTransform(this.width, this.height, options),
-          strokeWidth = this.strokeWidth,
+          strokeWidth = this.stroke ? this.strokeWidth : 0,
           strokeUniform = this.strokeUniform,
           borderScaleFactor = this.borderScaleFactor,
           width =

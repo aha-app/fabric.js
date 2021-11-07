@@ -639,7 +639,7 @@
      * @return {Object} .y height dimension
      */
     _getNonTransformedDimensions: function() {
-      var strokeWidth = this.strokeWidth,
+      var strokeWidth = this.stroke ? this.strokeWidth : 0,
           w = this.width + strokeWidth,
           h = this.height + strokeWidth;
       return { x: w, y: h };
@@ -693,8 +693,9 @@
      * @return {Object} .y finalized height dimension
      */
     _finalizeDimensions: function(width, height) {
+      var strokeWidth = this.stroke ? this.strokeWidth : 0;
       return this.strokeUniform ?
-        { x: width + this.strokeWidth, y: height + this.strokeWidth }
+        { x: width + strokeWidth, y: height + strokeWidth }
         :
         { x: width, y: height };
     },
