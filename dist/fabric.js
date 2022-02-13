@@ -6965,7 +6965,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     angle %= 360;
 
     hasRotated = target.angle !== angle;
-    target.angle = angle;
+    target.set('angle', angle);
     return hasRotated;
   }
 

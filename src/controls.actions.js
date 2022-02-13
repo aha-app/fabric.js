@@ -502,7 +502,7 @@
     angle %= 360;
 
     hasRotated = target.angle !== angle;
-    target.angle = angle;
+    target.set('angle', angle);
     return hasRotated;
   }
 
