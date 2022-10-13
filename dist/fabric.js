@@ -11716,6 +11716,10 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     },
 
     renderTopLayer: function(ctx) {
+      if (!ctx) {
+        return;
+      }
+
       ctx.save();
       if (this.isDrawingMode && this._isCurrentlyDrawing) {
         this.freeDrawingBrush && this.freeDrawingBrush._render();
@@ -12484,21 +12488,24 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      * @chainable
      */
     dispose: function () {
-      var wrapper = this.wrapperEl;
+      var wrapperEl = this.wrapperEl,
+          lowerCanvasEl = this.lowerCanvasEl,
+          upperCanvasEl = this.upperCanvasEl,
+          cacheCanvasEl = this.cacheCanvasEl;
       this.removeListeners();
-      wrapper.removeChild(this.upperCanvasEl);
-      wrapper.removeChild(this.lowerCanvasEl);
+      this.callSuper('dispose');
+      wrapperEl.removeChild(upperCanvasEl);
+      wrapperEl.removeChild(lowerCanvasEl);
       this.contextCache = null;
       this.contextTop = null;
-      ['upperCanvasEl', 'cacheCanvasEl'].forEach((function(element) {
-        fabric.util.cleanUpJsdomNode(this[element]);
-        this[element] = undefined;
-      }).bind(this));
-      if (wrapper.parentNode) {
-        wrapper.parentNode.replaceChild(this.lowerCanvasEl, this.wrapperEl);
+      fabric.util.cleanUpJsdomNode(upperCanvasEl);
+      this.upperCanvasEl = undefined;
+      fabric.util.cleanUpJsdomNode(cacheCanvasEl);
+      this.cacheCanvasEl = undefined;
+      if (wrapperEl.parentNode) {
+        wrapperEl.parentNode.replaceChild(lowerCanvasEl, wrapperEl);
       }
       delete this.wrapperEl;
-      fabric.StaticCanvas.prototype.dispose.call(this);
       return this;
     },
 
@@ -13750,6 +13757,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           selectionX2Y2 = new fabric.Point(max(x1, x2), max(y1, y2)),
           allowIntersect,
           isClick = x1 === x2 && y1 === y2;
+
       // we iterate reverse order to collect top first in case of click.
       for (var i = this._objects.length; i--; ) {
         currentObject = this._objects[i];
@@ -20495,7 +20503,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       newGroup.set(options);
       var firstIndex = null
       objects.forEach(function(object) {
-        // We record the *lowest* index of object in the group. We can't use 
+        // We record the *lowest* index of object in the group. We can't use
         // the highest index because in the case of dependent objects, removing
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.
