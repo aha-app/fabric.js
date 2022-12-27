@@ -6498,6 +6498,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     canvasOptions.target = target;
     canvas && canvas.fire('object:' + eventName, canvasOptions);
     target.fire(eventName, options);
+    options.transform.last = fabric.util.saveObjectTransform(target);
   }
 
   /**
@@ -11956,6 +11957,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
             shiftKey: e.shiftKey,
             altKey: altKey,
             original: fabric.util.saveObjectTransform(target),
+            last: fabric.util.saveObjectTransform(target),
           };
 
       if (this._shouldCenterTransform(target, action, altKey)) {
@@ -13757,7 +13759,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           selectionX2Y2 = new fabric.Point(max(x1, x2), max(y1, y2)),
           allowIntersect,
           isClick = x1 === x2 && y1 === y2;
-
       // we iterate reverse order to collect top first in case of click.
       for (var i = this._objects.length; i--; ) {
         currentObject = this._objects[i];
@@ -20503,7 +20504,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       newGroup.set(options);
       var firstIndex = null
       objects.forEach(function(object) {
-        // We record the *lowest* index of object in the group. We can't use
+        // We record the *lowest* index of object in the group. We can't use 
         // the highest index because in the case of dependent objects, removing
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.

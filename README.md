@@ -9,6 +9,11 @@ Changes from the upstream version:
   problem in cases where the mouseup is no longer over the control, e.g. because
   the control position is constrained somehow and the mouse moves off the control.
 * During rotation use `set` to set the angle.
+* Merge https://github.com/fabricjs/fabric.js/pull/7885
+* Include `last` information in `transform` argument to events that includes 
+  the previous transform values when an event was called. This makes it easier
+  (and possible in some cases it would have been impossible) to implement "delta"
+  based updates.
 
 <!-- build/coverage status, climate -->
 
