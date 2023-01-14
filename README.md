@@ -14,6 +14,8 @@ Changes from the upstream version:
   the previous transform values when an event was called. This makes it easier
   (and possible in some cases it would have been impossible) to implement "delta"
   based updates.
+* When generating a dataURL call _chooseObjectsToRender() to choose the objects
+  to render so it can be overridden in sub-classes.
 
 <!-- build/coverage status, climate -->
 

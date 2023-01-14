@@ -13891,7 +13891,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       this.width = scaledWidth;
       this.height = scaledHeight;
       this.calcViewportBoundaries();
-      this.renderCanvas(canvasEl.getContext('2d'), this._objects);
+      this.renderCanvas(canvasEl.getContext('2d'), this._chooseObjectsToRender());
       this.viewportTransform = vp;
       this.width = originalWidth;
       this.height = originalHeight;
