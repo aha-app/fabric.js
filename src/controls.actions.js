@@ -35,6 +35,7 @@
     canvasOptions.target = target;
     canvas && canvas.fire('object:' + eventName, canvasOptions);
     target.fire(eventName, options);
+    options.transform.last = fabric.util.saveObjectTransform(target);
   }
 
   /**
