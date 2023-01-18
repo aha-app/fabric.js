@@ -8664,9 +8664,9 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * The transformation (a Canvas 2D API transform matrix) which focuses the viewport
      * @type Array
      * @example <caption>Default transform</caption>
-     * canvas.viewportTransform = [1, 0, 0, 1, 0, 0]; 
+     * canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
      * @example <caption>Scale by 70% and translate toward bottom-right by 50, without skewing</caption>
-     * canvas.viewportTransform = [0.7, 0, 0, 0.7, 50, 50]; 
+     * canvas.viewportTransform = [0.7, 0, 0, 0.7, 50, 50];
      * @default
      */
     viewportTransform: fabric.iMatrix.concat(),
@@ -9327,7 +9327,9 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @chainable
      */
     clearContext: function(ctx) {
-      ctx.clearRect(0, 0, this.width, this.height);
+      if (ctx) {
+        ctx.clearRect(0, 0, this.width, this.height);
+      }
       return this;
     },
 
@@ -13757,7 +13759,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           selectionX2Y2 = new fabric.Point(max(x1, x2), max(y1, y2)),
           allowIntersect,
           isClick = x1 === x2 && y1 === y2;
-
       // we iterate reverse order to collect top first in case of click.
       for (var i = this._objects.length; i--; ) {
         currentObject = this._objects[i];
@@ -20503,7 +20504,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       newGroup.set(options);
       var firstIndex = null
       objects.forEach(function(object) {
-        // We record the *lowest* index of object in the group. We can't use
+        // We record the *lowest* index of object in the group. We can't use 
         // the highest index because in the case of dependent objects, removing
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.
