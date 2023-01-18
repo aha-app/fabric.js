@@ -6498,6 +6498,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     canvasOptions.target = target;
     canvas && canvas.fire('object:' + eventName, canvasOptions);
     target.fire(eventName, options);
+    options.transform.last = fabric.util.saveObjectTransform(target);
   }
 
   /**
@@ -11958,6 +11959,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
             shiftKey: e.shiftKey,
             altKey: altKey,
             original: fabric.util.saveObjectTransform(target),
+            last: fabric.util.saveObjectTransform(target),
           };
 
       if (this._shouldCenterTransform(target, action, altKey)) {
@@ -13891,7 +13893,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       this.width = scaledWidth;
       this.height = scaledHeight;
       this.calcViewportBoundaries();
-      this.renderCanvas(canvasEl.getContext('2d'), this._objects);
+      this.renderCanvas(canvasEl.getContext('2d'), this._chooseObjectsToRender());
       this.viewportTransform = vp;
       this.width = originalWidth;
       this.height = originalHeight;

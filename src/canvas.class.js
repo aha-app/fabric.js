@@ -671,6 +671,7 @@
             shiftKey: e.shiftKey,
             altKey: altKey,
             original: fabric.util.saveObjectTransform(target),
+            last: fabric.util.saveObjectTransform(target),
           };
 
       if (this._shouldCenterTransform(target, action, altKey)) {
