@@ -136,9 +136,9 @@
      * The transformation (a Canvas 2D API transform matrix) which focuses the viewport
      * @type Array
      * @example <caption>Default transform</caption>
-     * canvas.viewportTransform = [1, 0, 0, 1, 0, 0]; 
+     * canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
      * @example <caption>Scale by 70% and translate toward bottom-right by 50, without skewing</caption>
-     * canvas.viewportTransform = [0.7, 0, 0, 0.7, 50, 50]; 
+     * canvas.viewportTransform = [0.7, 0, 0, 0.7, 50, 50];
      * @default
      */
     viewportTransform: fabric.iMatrix.concat(),
@@ -799,7 +799,9 @@
      * @chainable
      */
     clearContext: function(ctx) {
-      ctx.clearRect(0, 0, this.width, this.height);
+      if (ctx) {
+        ctx.clearRect(0, 0, this.width, this.height);
+      }
       return this;
     },
 
