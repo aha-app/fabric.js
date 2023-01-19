@@ -11713,8 +11713,12 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       if (this.hasLostContext) {
         this.renderTopLayer(this.contextTop);
       }
+
       var canvasToDrawOn = this.contextContainer;
-      this.renderCanvas(canvasToDrawOn, this._chooseObjectsToRender());
+      if (canvasToDrawOn) {
+        this.renderCanvas(canvasToDrawOn, this._chooseObjectsToRender());
+      }
+
       return this;
     },
 
