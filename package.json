@@ -2,7 +2,7 @@
   "name": "@aha-app/fabric",
   "description": "Object model for HTML5 canvas, and SVG-to-canvas parser. Backed by jsdom and node-canvas.",
   "homepage": "http://fabricjs.com/",
-  "version": "4.6.0-aha-9",
+  "version": "4.6.0-aha-10",
   "author": "Juriy Zaytsev <kangax@gmail.com>",
   "contributors": [
     {
@@ -69,7 +69,7 @@
   },
   "optionalDependencies": {
     "canvas": "^2.8.0",
-    "jsdom": "^15.2.1"
+    "jsdom": "^20.0.1"
   },
   "devDependencies": {
     "chalk": "^2.4.1",
