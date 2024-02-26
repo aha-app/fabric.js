@@ -173,6 +173,7 @@
       this.setCursor(this.defaultCursor);
       // clear selection and current transformation
       this._groupSelector = null;
+      this.fire('groupSelctor:cleared');
     }
   });
 
