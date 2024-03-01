@@ -662,6 +662,13 @@
     selectionFullyContained: false,
 
     /**
+     * When true, the groupSelector can be created within a selected object by dragging
+     * @type Boolean
+     * @default
+     */
+    allowsDragSelection: false,
+
+    /**
      * Constructor
      * @param {Object} [options] Options object
      */

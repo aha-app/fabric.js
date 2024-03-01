@@ -13030,8 +13030,8 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           groupSelector = this._groupSelector, shouldRender = false,
           isClick = (!groupSelector || (groupSelector.left === 0 && groupSelector.top === 0));
       this._cacheTransformEventData(e);
-      target = this._target;
       this._handleEvent(e, 'up:before');
+      target = this._target;
       // if right/middle click just fire events and return
       // target undefined will make the _handleEvent search the target
       if (checkClick(e, RIGHT_CLICK)) {
@@ -13093,6 +13093,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       this._setCursorFromEvent(e, target);
       this._handleEvent(e, 'up', LEFT_CLICK, isClick);
       this._groupSelector = null;
+      this.fire('groupSelector:cleared');
       this._currentTransform = null;
       // reset the target information about which corner is selected
       target && (target.__corner = 0);
@@ -13331,13 +13332,14 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       }
 
       if (this.selection && (!target ||
-        (!target.selectable && !target.isEditing && target !== this._activeObject))) {
+        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
         this._groupSelector = {
           ex: this._absolutePointer.x,
           ey: this._absolutePointer.y,
           top: 0,
           left: 0
         };
+        this.fire('groupSelector:created');
       }
 
       if (target) {
@@ -13431,6 +13433,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
         groupSelector.left = pointer.x - groupSelector.ex;
         groupSelector.top = pointer.y - groupSelector.ey;
+        this.fire('groupSelector:updated');
 
         this.renderTop();
       }
@@ -13807,6 +13810,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       this.setCursor(this.defaultCursor);
       // clear selection and current transformation
       this._groupSelector = null;
+      this.fire('groupSelctor:cleared');
     }
   });
 
@@ -14804,6 +14808,13 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @default
      */
     selectionFullyContained: false,
+
+    /**
+     * When true, the groupSelector can be created within a selected object by dragging
+     * @type Boolean
+     * @default
+     */
+    allowsDragSelection: false,
 
     /**
      * Constructor
