@@ -741,6 +741,7 @@
           }
         }
       }
+      this._setCursorFromEvent(e, target);
       this._handleEvent(e, 'down');
       // we must renderAll so that we update the visuals
       (shouldRender || shouldGroup) && this.requestRenderAll();
