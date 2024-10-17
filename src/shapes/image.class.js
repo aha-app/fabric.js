@@ -1,11 +1,11 @@
-(function(global) {
+(function (global) {
 
   'use strict';
 
   var extend = fabric.util.object.extend;
 
   if (!global.fabric) {
-    global.fabric = { };
+    global.fabric = {};
   }
 
   if (global.fabric.Image) {
@@ -145,8 +145,8 @@
      * @param {function} [callback] callback function to call after eventual filters applied.
      * @return {fabric.Image} thisArg
      */
-    initialize: function(element, options) {
-      options || (options = { });
+    initialize: function (element, options) {
+      options || (options = {});
       this.filters = [];
       this.cacheKey = 'texture' + fabric.Object.__uid++;
       this.callSuper('initialize', options);
@@ -157,7 +157,7 @@
      * Returns image element which this instance if based on
      * @return {HTMLImageElement} Image element
      */
-    getElement: function() {
+    getElement: function () {
       return this._element || {};
     },
 
@@ -170,7 +170,7 @@
      * @return {fabric.Image} thisArg
      * @chainable
      */
-    setElement: function(element, options) {
+    setElement: function (element, options) {
       this.removeTexture(this.cacheKey);
       this.removeTexture(this.cacheKey + '_filtered');
       this._element = element;
@@ -192,7 +192,7 @@
     /**
      * Delete a single texture if in webgl mode
      */
-    removeTexture: function(key) {
+    removeTexture: function (key) {
       var backend = fabric.filterBackend;
       if (backend && backend.evictCachesForKey) {
         backend.evictCachesForKey(key);
@@ -202,11 +202,11 @@
     /**
      * Delete textures, reference to elements and eventually JSDOM cleanup
      */
-    dispose: function() {
+    dispose: function () {
       this.removeTexture(this.cacheKey);
       this.removeTexture(this.cacheKey + '_filtered');
       this._cacheContext = undefined;
-      ['_originalElement', '_element', '_filteredEl', '_cacheCanvas'].forEach((function(element) {
+      ['_originalElement', '_element', '_filteredEl', '_cacheCanvas'].forEach((function (element) {
         fabric.util.cleanUpJsdomNode(this[element]);
         this[element] = undefined;
       }).bind(this));
@@ -215,7 +215,7 @@
     /**
      * Get the crossOrigin value (of the corresponding image element)
      */
-    getCrossOrigin: function() {
+    getCrossOrigin: function () {
       return this._originalElement && (this._originalElement.crossOrigin || null);
     },
 
@@ -223,7 +223,7 @@
      * Returns original size of an image
      * @return {Object} Object with "width" and "height" properties
      */
-    getOriginalSize: function() {
+    getOriginalSize: function () {
       var element = this.getElement();
       return {
         width: element.naturalWidth || element.width,
@@ -235,8 +235,8 @@
      * @private
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
-    _stroke: function(ctx) {
-      if (!this.stroke || this.strokeWidth === 0) {
+    _stroke: function (ctx) {
+      if (!this.stroke || this.stroke === 'transparent' || this.strokeWidth === 0) {
         return;
       }
       var w = this.width / 2, h = this.height / 2;
@@ -254,10 +254,10 @@
      * @param {Array} [propertiesToInclude] Any properties that you might want to additionally include in the output
      * @return {Object} Object representation of an instance
      */
-    toObject: function(propertiesToInclude) {
+    toObject: function (propertiesToInclude) {
       var filters = [];
 
-      this.filters.forEach(function(filterObj) {
+      this.filters.forEach(function (filterObj) {
         if (filterObj) {
           filters.push(filterObj.toObject());
         }
@@ -267,10 +267,10 @@
           'toObject',
           ['cropX', 'cropY'].concat(propertiesToInclude)
         ), {
-          src: this.getSrc(),
-          crossOrigin: this.getCrossOrigin(),
-          filters: filters,
-        });
+        src: this.getSrc(),
+        crossOrigin: this.getCrossOrigin(),
+        filters: filters,
+      });
       if (this.resizeFilter) {
         object.resizeFilter = this.resizeFilter.toObject();
       }
@@ -281,7 +281,7 @@
      * Returns true if an image has crop applied, inspecting values of cropX,cropY,width,height.
      * @return {Boolean}
      */
-    hasCrop: function() {
+    hasCrop: function () {
       return this.cropX || this.cropY || this.width < this._element.width || this.height < this._element.height;
     },
 
@@ -291,9 +291,9 @@
      * @return {Array} an array of strings with the specific svg representation
      * of the instance
      */
-    _toSVG: function() {
+    _toSVG: function () {
       var svgString = [], imageMarkup = [], strokeSvg, element = this._element,
-          x = -this.width / 2, y = -this.height / 2, clipPath = '', imageRendering = '';
+        x = -this.width / 2, y = -this.height / 2, clipPath = '', imageRendering = '';
       if (!element) {
         return [];
       }
@@ -320,7 +320,7 @@
         '"', clipPath,
         '></image>\n');
 
-      if (this.stroke || this.strokeDashArray) {
+      if ((this.stroke && this.stroke !== 'transparent') || this.strokeDashArray) {
         var origFill = this.fill;
         this.fill = null;
         strokeSvg = [
@@ -347,7 +347,7 @@
      * @param {Boolean} filtered indicates if the src is needed for svg
      * @return {String} Source of an image
      */
-    getSrc: function(filtered) {
+    getSrc: function (filtered) {
       var element = filtered ? this._element : this._originalElement;
       if (element) {
         if (element.toDataURL) {
@@ -376,8 +376,8 @@
      * @return {fabric.Image} thisArg
      * @chainable
      */
-    setSrc: function(src, callback, options) {
-      fabric.util.loadImage(src, function(img, isError) {
+    setSrc: function (src, callback, options) {
+      fabric.util.loadImage(src, function (img, isError) {
         this.setElement(img, options);
         this._setWidthHeight();
         callback && callback(this, isError);
@@ -389,17 +389,17 @@
      * Returns string representation of an instance
      * @return {String} String representation of an instance
      */
-    toString: function() {
+    toString: function () {
       return '#<fabric.Image: { src: "' + this.getSrc() + '" }>';
     },
 
-    applyResizeFilters: function() {
+    applyResizeFilters: function () {
       var filter = this.resizeFilter,
-          minimumScale = this.minimumScaleTrigger,
-          objectScale = this.getTotalObjectScaling(),
-          scaleX = objectScale.scaleX,
-          scaleY = objectScale.scaleY,
-          elementToFilter = this._filteredEl || this._originalElement;
+        minimumScale = this.minimumScaleTrigger,
+        objectScale = this.getTotalObjectScaling(),
+        scaleX = objectScale.scaleX,
+        scaleY = objectScale.scaleY,
+        elementToFilter = this._filteredEl || this._originalElement;
       if (this.group) {
         this.set('dirty', true);
       }
@@ -415,8 +415,8 @@
         fabric.filterBackend = fabric.initFilterBackend();
       }
       var canvasEl = fabric.util.createCanvasElement(),
-          cacheKey = this._filteredEl ? (this.cacheKey + '_filtered') : this.cacheKey,
-          sourceWidth = elementToFilter.width, sourceHeight = elementToFilter.height;
+        cacheKey = this._filteredEl ? (this.cacheKey + '_filtered') : this.cacheKey,
+        sourceWidth = elementToFilter.width, sourceHeight = elementToFilter.height;
       canvasEl.width = sourceWidth;
       canvasEl.height = sourceHeight;
       this._element = canvasEl;
@@ -436,10 +436,10 @@
      * @return {thisArg} return the fabric.Image object
      * @chainable
      */
-    applyFilters: function(filters) {
+    applyFilters: function (filters) {
 
       filters = filters || this.filters || [];
-      filters = filters.filter(function(filter) { return filter && !filter.isNeutralState(); });
+      filters = filters.filter(function (filter) { return filter && !filter.isNeutralState(); });
       this.set('dirty', true);
 
       // needs to clear out or WEBGL will not resize correctly
@@ -454,8 +454,8 @@
       }
 
       var imgElement = this._originalElement,
-          sourceWidth = imgElement.naturalWidth || imgElement.width,
-          sourceHeight = imgElement.naturalHeight || imgElement.height;
+        sourceWidth = imgElement.naturalWidth || imgElement.width,
+        sourceHeight = imgElement.naturalHeight || imgElement.height;
 
       if (this._element === this._originalElement) {
         // if the element is the same we need to create a new element
@@ -491,7 +491,7 @@
      * @private
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
-    _render: function(ctx) {
+    _render: function (ctx) {
       fabric.util.setImageSmoothing(ctx, this.imageSmoothing);
       if (this.isMoving !== true && this.resizeFilter && this._needsResize()) {
         this.applyResizeFilters();
@@ -505,7 +505,7 @@
      * it will set the imageSmoothing for the draw operation
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
-    drawCacheOnCanvas: function(ctx) {
+    drawCacheOnCanvas: function (ctx) {
       fabric.util.setImageSmoothing(ctx, this.imageSmoothing);
       fabric.Object.prototype.drawCacheOnCanvas.call(this, ctx);
     },
@@ -521,29 +521,29 @@
      * A full performance audit should be done.
      * @return {Boolean}
      */
-    shouldCache: function() {
+    shouldCache: function () {
       return this.needsItsOwnCache();
     },
 
-    _renderFill: function(ctx) {
+    _renderFill: function (ctx) {
       var elementToDraw = this._element;
       if (!elementToDraw) {
         return;
       }
       var scaleX = this._filterScalingX, scaleY = this._filterScalingY,
-          w = this.width, h = this.height, min = Math.min, max = Math.max,
-          // crop values cannot be lesser than 0.
-          cropX = max(this.cropX, 0), cropY = max(this.cropY, 0),
-          elWidth = elementToDraw.naturalWidth || elementToDraw.width,
-          elHeight = elementToDraw.naturalHeight || elementToDraw.height,
-          sX = cropX * scaleX,
-          sY = cropY * scaleY,
-          // the width height cannot exceed element width/height, starting from the crop offset.
-          sW = min(w * scaleX, elWidth - sX),
-          sH = min(h * scaleY, elHeight - sY),
-          x = -w / 2, y = -h / 2,
-          maxDestW = min(w, elWidth / scaleX - cropX),
-          maxDestH = min(h, elHeight / scaleY - cropY);
+        w = this.width, h = this.height, min = Math.min, max = Math.max,
+        // crop values cannot be lesser than 0.
+        cropX = max(this.cropX, 0), cropY = max(this.cropY, 0),
+        elWidth = elementToDraw.naturalWidth || elementToDraw.width,
+        elHeight = elementToDraw.naturalHeight || elementToDraw.height,
+        sX = cropX * scaleX,
+        sY = cropY * scaleY,
+        // the width height cannot exceed element width/height, starting from the crop offset.
+        sW = min(w * scaleX, elWidth - sX),
+        sH = min(h * scaleY, elHeight - sY),
+        x = -w / 2, y = -h / 2,
+        maxDestW = min(w, elWidth / scaleX - cropX),
+        maxDestH = min(h, elHeight / scaleY - cropY);
 
       elementToDraw && ctx.drawImage(elementToDraw, sX, sY, sW, sH, x, y, maxDestW, maxDestH);
     },
@@ -552,7 +552,7 @@
      * needed to check if image needs resize
      * @private
      */
-    _needsResize: function() {
+    _needsResize: function () {
       var scale = this.getTotalObjectScaling();
       return (scale.scaleX !== this._lastScaleX || scale.scaleY !== this._lastScaleY);
     },
@@ -560,7 +560,7 @@
     /**
      * @private
      */
-    _resetWidthHeight: function() {
+    _resetWidthHeight: function () {
       this.set(this.getOriginalSize());
     },
 
@@ -571,7 +571,7 @@
      * @param {HTMLImageElement|String} element The element representing the image
      * @param {Object} [options] Options object
      */
-    _initElement: function(element, options) {
+    _initElement: function (element, options) {
       this.setElement(fabric.util.getById(element), options);
       fabric.util.addClass(this.getElement(), fabric.Image.CSS_CANVAS);
     },
@@ -580,8 +580,8 @@
      * @private
      * @param {Object} [options] Options object
      */
-    _initConfig: function(options) {
-      options || (options = { });
+    _initConfig: function (options) {
+      options || (options = {});
       this.setOptions(options);
       this._setWidthHeight(options);
     },
@@ -591,9 +591,9 @@
      * @param {Array} filters to be initialized
      * @param {Function} callback Callback to invoke when all fabric.Image.filters instances are created
      */
-    _initFilters: function(filters, callback) {
+    _initFilters: function (filters, callback) {
       if (filters && filters.length) {
-        fabric.util.enlivenObjects(filters, function(enlivenedObjects) {
+        fabric.util.enlivenObjects(filters, function (enlivenedObjects) {
           callback && callback(enlivenedObjects);
         }, 'fabric.Image.filters');
       }
@@ -608,8 +608,8 @@
      * options.
      * @param {Object} [options] Object with width/height properties
      */
-    _setWidthHeight: function(options) {
-      options || (options = { });
+    _setWidthHeight: function (options) {
+      options || (options = {});
       var el = this.getElement();
       this.width = options.width || el.naturalWidth || el.width || 0;
       this.height = options.height || el.naturalHeight || el.height || 0;
@@ -621,11 +621,11 @@
      * @private
      * @return {Object}
      */
-    parsePreserveAspectRatioAttribute: function() {
+    parsePreserveAspectRatioAttribute: function () {
       var pAR = fabric.util.parsePreserveAspectRatioAttribute(this.preserveAspectRatio || ''),
-          rWidth = this._element.width, rHeight = this._element.height,
-          scaleX = 1, scaleY = 1, offsetLeft = 0, offsetTop = 0, cropX = 0, cropY = 0,
-          offset, pWidth = this.width, pHeight = this.height, parsedAttributes = { width: pWidth, height: pHeight };
+        rWidth = this._element.width, rHeight = this._element.height,
+        scaleX = 1, scaleY = 1, offsetLeft = 0, offsetTop = 0, cropX = 0, cropY = 0,
+        offset, pWidth = this.width, pHeight = this.height, parsedAttributes = { width: pWidth, height: pHeight };
       if (pAR && (pAR.alignX !== 'none' || pAR.alignY !== 'none')) {
         if (pAR.meetOrSlice === 'meet') {
           scaleX = scaleY = fabric.util.findScaleToFit(this._element, parsedAttributes);
@@ -701,18 +701,18 @@
    * @param {Object} object Object to create an instance from
    * @param {Function} callback Callback to invoke when an image instance is created
    */
-  fabric.Image.fromObject = function(_object, callback) {
+  fabric.Image.fromObject = function (_object, callback) {
     var object = fabric.util.object.clone(_object);
-    fabric.util.loadImage(object.src, function(img, isError) {
+    fabric.util.loadImage(object.src, function (img, isError) {
       if (isError) {
         callback && callback(null, true);
         return;
       }
-      fabric.Image.prototype._initFilters.call(object, object.filters, function(filters) {
+      fabric.Image.prototype._initFilters.call(object, object.filters, function (filters) {
         object.filters = filters || [];
-        fabric.Image.prototype._initFilters.call(object, [object.resizeFilter], function(resizeFilters) {
+        fabric.Image.prototype._initFilters.call(object, [object.resizeFilter], function (resizeFilters) {
           object.resizeFilter = resizeFilters[0];
-          fabric.util.enlivenObjects([object.clipPath], function(enlivedProps) {
+          fabric.util.enlivenObjects([object.clipPath], function (enlivedProps) {
             object.clipPath = enlivedProps[0];
             var image = new fabric.Image(img, object);
             callback(image, false);
@@ -729,8 +729,8 @@
    * @param {Function} [callback] Callback to invoke when image is created (newly created image is passed as a first argument). Second argument is a boolean indicating if an error occurred or not.
    * @param {Object} [imgOptions] Options object
    */
-  fabric.Image.fromURL = function(url, callback, imgOptions) {
-    fabric.util.loadImage(url, function(img, isError) {
+  fabric.Image.fromURL = function (url, callback, imgOptions) {
+    fabric.util.loadImage(url, function (img, isError) {
       callback && callback(new fabric.Image(img, imgOptions), isError);
     }, null, imgOptions && imgOptions.crossOrigin);
   };
@@ -754,10 +754,10 @@
    * @param {Function} callback Callback to execute when fabric.Image object is created
    * @return {fabric.Image} Instance of fabric.Image
    */
-  fabric.Image.fromElement = function(element, callback, options) {
+  fabric.Image.fromElement = function (element, callback, options) {
     var parsedAttributes = fabric.parseAttributes(element, fabric.Image.ATTRIBUTE_NAMES);
     fabric.Image.fromURL(parsedAttributes['xlink:href'], callback,
-      extend((options ? fabric.util.object.clone(options) : { }), parsedAttributes));
+      extend((options ? fabric.util.object.clone(options) : {}), parsedAttributes));
   };
   /* _FROM_SVG_END_ */
 
