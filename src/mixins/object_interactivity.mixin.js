@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
   var degreesToRadians = fabric.util.degreesToRadians;
 
@@ -9,7 +9,7 @@
      * @param {Object} pointer The pointer indicating the mouse position
      * @return {String|Boolean} corner code (tl, tr, bl, br, etc.), or false if nothing is found
      */
-    _findTargetCorner: function(pointer, forTouch) {
+    _findTargetCorner: function (pointer, forTouch) {
       // objects in group, anykind, are not self modificable,
       // must not return an hovered corner.
       if (!this.hasControls || this.group || (!this.canvas || this.canvas._activeObject !== this)) {
@@ -17,10 +17,10 @@
       }
 
       var ex = pointer.x,
-          ey = pointer.y,
-          xPoints,
-          lines, keys = Object.keys(this.oCoords),
-          j = keys.length - 1, i;
+        ey = pointer.y,
+        xPoints,
+        lines, keys = Object.keys(this.oCoords),
+        j = keys.length - 1, i;
       this.__corner = 0;
 
       // cycle in reverse order so we pick first the one on top
@@ -59,7 +59,7 @@
      * with the control, the object that is calling the iterator and the control's key
      * @param {Function} fn function to iterate over the controls over
      */
-    forEachControl: function(fn) {
+    forEachControl: function (fn) {
       for (var i in this.controls) {
         fn(this.controls[i], i, this);
       };
@@ -72,7 +72,7 @@
      * everything would resolve to a single point and a pythagorean theorem for the distance
      * @private
      */
-    _setCornerCoords: function() {
+    _setCornerCoords: function () {
       var coords = this.oCoords;
 
       for (var control in coords) {
@@ -93,7 +93,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    drawSelectionBackground: function(ctx) {
+    drawSelectionBackground: function (ctx) {
       if (!this.selectionBackgroundColor ||
         (this.canvas && !this.canvas.interactive) ||
         (this.canvas && this.canvas._activeObject !== this)
@@ -102,7 +102,7 @@
       }
       ctx.save();
       var center = this.getCenterPoint(), wh = this._calculateCurrentDimensions(),
-          vpt = this.canvas.viewportTransform;
+        vpt = this.canvas.viewportTransform;
       ctx.translate(center.x, center.y);
       ctx.scale(1 / vpt[0], 1 / vpt[3]);
       ctx.rotate(degreesToRadians(this.angle));
@@ -121,15 +121,15 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    drawBorders: function(ctx, styleOverride) {
+    drawBorders: function (ctx, styleOverride) {
       styleOverride = styleOverride || {};
       var wh = this._calculateCurrentDimensions(),
-          strokeWidth = this.borderScaleFactor,
-          width = wh.x + strokeWidth,
-          height = wh.y + strokeWidth,
-          hasControls = typeof styleOverride.hasControls !== 'undefined' ?
-            styleOverride.hasControls : this.hasControls,
-          shouldStroke = false;
+        strokeWidth = this.borderScaleFactor,
+        width = wh.x + strokeWidth,
+        height = wh.y + strokeWidth,
+        hasControls = typeof styleOverride.hasControls !== 'undefined' ?
+          styleOverride.hasControls : this.hasControls,
+        shouldStroke = false;
 
       ctx.save();
       ctx.strokeStyle = styleOverride.borderColor || this.borderColor;
@@ -144,7 +144,7 @@
 
       if (hasControls) {
         ctx.beginPath();
-        this.forEachControl(function(control, key, fabricObject) {
+        this.forEachControl(function (control, key, fabricObject) {
           // in this moment, the ctx is centered on the object.
           // width and height of the above function are the size of the bbox.
           if (control.withConnection && control.getVisibility(fabricObject, key)) {
@@ -175,16 +175,16 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    drawBordersInGroup: function(ctx, options, styleOverride) {
+    drawBordersInGroup: function (ctx, options, styleOverride) {
       styleOverride = styleOverride || {};
       var bbox = fabric.util.sizeAfterTransform(this.width, this.height, options),
-          strokeWidth = this.stroke ? this.strokeWidth : 0,
-          strokeUniform = this.strokeUniform,
-          borderScaleFactor = this.borderScaleFactor,
-          width =
-            bbox.x + strokeWidth * (strokeUniform ? this.canvas.getZoom() : options.scaleX) + borderScaleFactor,
-          height =
-            bbox.y + strokeWidth * (strokeUniform ? this.canvas.getZoom() : options.scaleY) + borderScaleFactor;
+        strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
+        strokeUniform = this.strokeUniform,
+        borderScaleFactor = this.borderScaleFactor,
+        width =
+          bbox.x + strokeWidth * (strokeUniform ? this.canvas.getZoom() : options.scaleX) + borderScaleFactor,
+        height =
+          bbox.y + strokeWidth * (strokeUniform ? this.canvas.getZoom() : options.scaleY) + borderScaleFactor;
       ctx.save();
       this._setLineDash(ctx, styleOverride.borderDashArray || this.borderDashArray);
       ctx.strokeStyle = styleOverride.borderColor || this.borderColor;
@@ -208,7 +208,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    drawControls: function(ctx, styleOverride) {
+    drawControls: function (ctx, styleOverride) {
       styleOverride = styleOverride || {};
       ctx.save();
       var retinaScaling = this.canvas.getRetinaScaling(), matrix, p;
@@ -227,7 +227,7 @@
         // using no padding, circular controls and hiding the rotating cursor is higly suggested,
         matrix = this.group.calcTransformMatrix();
       }
-      this.forEachControl(function(control, key, fabricObject) {
+      this.forEachControl(function (control, key, fabricObject) {
         p = fabricObject.oCoords[key];
         if (control.getVisibility(fabricObject, key)) {
           if (matrix) {
@@ -246,7 +246,7 @@
      * @param {String} controlKey The key of the control. Possible values are 'tl', 'tr', 'br', 'bl', 'ml', 'mt', 'mr', 'mb', 'mtr'.
      * @returns {Boolean} true if the specified control is visible, false otherwise
      */
-    isControlVisible: function(controlKey) {
+    isControlVisible: function (controlKey) {
       return this.controls[controlKey] && this.controls[controlKey].getVisibility(this, controlKey);
     },
 
@@ -257,7 +257,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    setControlVisible: function(controlKey, visible) {
+    setControlVisible: function (controlKey, visible) {
       if (!this._controlsVisibility) {
         this._controlsVisibility = {};
       }
@@ -280,8 +280,8 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    setControlsVisibility: function(options) {
-      options || (options = { });
+    setControlsVisibility: function (options) {
+      options || (options = {});
 
       for (var p in options) {
         this.setControlVisible(p, options[p]);
@@ -296,7 +296,7 @@
      * @param {Object} [options] options sent from the upper functions
      * @param {Event} [options.e] event if the process is generated by an event
      */
-    onDeselect: function() {
+    onDeselect: function () {
       // implemented by sub-classes, as needed.
     },
 
@@ -307,7 +307,7 @@
      * @param {Object} [options] options sent from the upper functions
      * @param {Event} [options.e] event if the process is generated by an event
      */
-    onSelect: function() {
+    onSelect: function () {
       // implemented by sub-classes, as needed.
     }
   });

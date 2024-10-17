@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
   function arrayFromCoords(coords) {
     return [
@@ -10,9 +10,9 @@
   }
 
   var util = fabric.util,
-      degreesToRadians = util.degreesToRadians,
-      multiplyMatrices = util.multiplyTransformMatrices,
-      transformPoint = util.transformPoint;
+    degreesToRadians = util.degreesToRadians,
+    multiplyMatrices = util.multiplyTransformMatrices,
+    transformPoint = util.transformPoint;
 
   util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prototype */ {
 
@@ -64,7 +64,7 @@
      * custom controls interface
      * controls are added by default_controls.js
      */
-    controls: { },
+    controls: {},
 
     /**
      * return correct set of coordinates for intersection
@@ -72,7 +72,7 @@
      * @param {Boolean} absolute will return aCoords if true or lineCoords
      * @return {Object} {tl, tr, br, bl} points
      */
-    _getCoords: function(absolute, calculate) {
+    _getCoords: function (absolute, calculate) {
       if (calculate) {
         return (absolute ? this.calcACoords() : this.calcLineCoords());
       }
@@ -88,7 +88,7 @@
      * The coords are returned in an array.
      * @return {Array} [tl, tr, br, bl] of points
      */
-    getCoords: function(absolute, calculate) {
+    getCoords: function (absolute, calculate) {
       return arrayFromCoords(this._getCoords(absolute, calculate));
     },
 
@@ -100,13 +100,13 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if object intersects with an area formed by 2 points
      */
-    intersectsWithRect: function(pointTL, pointBR, absolute, calculate) {
+    intersectsWithRect: function (pointTL, pointBR, absolute, calculate) {
       var coords = this.getCoords(absolute, calculate),
-          intersection = fabric.Intersection.intersectPolygonRectangle(
-            coords,
-            pointTL,
-            pointBR
-          );
+        intersection = fabric.Intersection.intersectPolygonRectangle(
+          coords,
+          pointTL,
+          pointBR
+        );
       return intersection.status === 'Intersection';
     },
 
@@ -117,7 +117,7 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if object intersects with another object
      */
-    intersectsWithObject: function(other, absolute, calculate) {
+    intersectsWithObject: function (other, absolute, calculate) {
       var intersection = fabric.Intersection.intersectPolygonPolygon(
         this.getCoords(absolute, calculate),
         other.getCoords(absolute, calculate)
@@ -135,10 +135,10 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if object is fully contained within area of another object
      */
-    isContainedWithinObject: function(other, absolute, calculate) {
+    isContainedWithinObject: function (other, absolute, calculate) {
       var points = this.getCoords(absolute, calculate),
-          otherCoords = absolute ? other.aCoords : other.lineCoords,
-          i = 0, lines = other._getImageLines(otherCoords);
+        otherCoords = absolute ? other.aCoords : other.lineCoords,
+        i = 0, lines = other._getImageLines(otherCoords);
       for (; i < 4; i++) {
         if (!other.containsPoint(points[i], lines)) {
           return false;
@@ -155,7 +155,7 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if object is fully contained within area formed by 2 points
      */
-    isContainedWithinRect: function(pointTL, pointBR, absolute, calculate) {
+    isContainedWithinRect: function (pointTL, pointBR, absolute, calculate) {
       var boundingRect = this.getBoundingRect(absolute, calculate);
 
       return (
@@ -174,10 +174,10 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if point is inside the object
      */
-    containsPoint: function(point, lines, absolute, calculate) {
+    containsPoint: function (point, lines, absolute, calculate) {
       var coords = this._getCoords(absolute, calculate),
-          lines = lines || this._getImageLines(coords),
-          xPoints = this._findCrossPoints(point, lines);
+        lines = lines || this._getImageLines(coords),
+        xPoints = this._findCrossPoints(point, lines);
       // if xPoints is odd then point is inside the object
       return (xPoints !== 0 && xPoints % 2 === 1);
     },
@@ -188,16 +188,16 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .aCoords
      * @return {Boolean} true if object is fully or partially contained within canvas
      */
-    isOnScreen: function(calculate) {
+    isOnScreen: function (calculate) {
       if (!this.canvas) {
         return false;
       }
       var pointTL = this.canvas.vptCoords.tl, pointBR = this.canvas.vptCoords.br;
       var points = this.getCoords(true, calculate);
       // if some point is on screen, the object is on screen.
-      if (points.some(function(point) {
+      if (points.some(function (point) {
         return point.x <= pointBR.x && point.x >= pointTL.x &&
-        point.y <= pointBR.y && point.y >= pointTL.y;
+          point.y <= pointBR.y && point.y >= pointTL.y;
       })) {
         return true;
       }
@@ -217,7 +217,7 @@
      * @param {Boolean} calculate use coordinates of current position instead of .oCoords
      * @return {Boolean} true if the object contains the point
      */
-    _containsCenterOfCanvas: function(pointTL, pointBR, calculate) {
+    _containsCenterOfCanvas: function (pointTL, pointBR, calculate) {
       // worst case scenario the object is so big that contains the screen
       var centerPoint = { x: (pointTL.x + pointBR.x) / 2, y: (pointTL.y + pointBR.y) / 2 };
       if (this.containsPoint(centerPoint, null, true, calculate)) {
@@ -231,7 +231,7 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords
      * @return {Boolean} true if object is partially contained within canvas
      */
-    isPartiallyOnScreen: function(calculate) {
+    isPartiallyOnScreen: function (calculate) {
       if (!this.canvas) {
         return false;
       }
@@ -239,9 +239,9 @@
       if (this.intersectsWithRect(pointTL, pointBR, true, calculate)) {
         return true;
       }
-      var allPointsAreOutside = this.getCoords(true, calculate).every(function(point) {
+      var allPointsAreOutside = this.getCoords(true, calculate).every(function (point) {
         return (point.x >= pointBR.x || point.x <= pointTL.x) &&
-        (point.y >= pointBR.y || point.y <= pointTL.y);
+          (point.y >= pointBR.y || point.y <= pointTL.y);
       });
       return allPointsAreOutside && this._containsCenterOfCanvas(pointTL, pointBR, calculate);
     },
@@ -251,7 +251,7 @@
      * @private
      * @param {Object} oCoords Coordinates of the object corners
      */
-    _getImageLines: function(oCoords) {
+    _getImageLines: function (oCoords) {
 
       var lines = {
         topline: {
@@ -298,10 +298,10 @@
      * @param {Object} lines Coordinates of the object being evaluated
      */
     // remove yi, not used but left code here just in case.
-    _findCrossPoints: function(point, lines) {
+    _findCrossPoints: function (point, lines) {
       var b1, b2, a1, a2, xi, // yi,
-          xcount = 0,
-          iLine;
+        xcount = 0,
+        iLine;
 
       for (var lineKey in lines) {
         iLine = lines[lineKey];
@@ -347,7 +347,7 @@
      * @param {Boolean} [calculate] use coordinates of current position instead of .oCoords / .aCoords
      * @return {Object} Object with left, top, width, height properties
      */
-    getBoundingRect: function(absolute, calculate) {
+    getBoundingRect: function (absolute, calculate) {
       var coords = this.getCoords(absolute, calculate);
       return util.makeBoundingBoxFromPoints(coords);
     },
@@ -357,7 +357,7 @@
      * before 2.0 it was named getWidth();
      * @return {Number} width value
      */
-    getScaledWidth: function() {
+    getScaledWidth: function () {
       return this._getTransformedDimensions().x;
     },
 
@@ -366,7 +366,7 @@
      * before 2.0 it was named getHeight();
      * @return {Number} height value
      */
-    getScaledHeight: function() {
+    getScaledHeight: function () {
       return this._getTransformedDimensions().y;
     },
 
@@ -376,7 +376,7 @@
      * @param {Number} value
      * @return {Number}
      */
-    _constrainScale: function(value) {
+    _constrainScale: function (value) {
       if (Math.abs(value) < this.minScaleLimit) {
         if (value < 0) {
           return -this.minScaleLimit;
@@ -397,7 +397,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    scale: function(value) {
+    scale: function (value) {
       this._set('scaleX', value);
       this._set('scaleY', value);
       return this.setCoords();
@@ -410,7 +410,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    scaleToWidth: function(value, absolute) {
+    scaleToWidth: function (value, absolute) {
       // adjust to bounding rect factor so that rotated shapes would fit as well
       var boundingRectFactor = this.getBoundingRect(absolute).width / this.getScaledWidth();
       return this.scale(value / this.width / boundingRectFactor);
@@ -423,7 +423,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    scaleToHeight: function(value, absolute) {
+    scaleToHeight: function (value, absolute) {
       // adjust to bounding rect factor so that rotated shapes would fit as well
       var boundingRectFactor = this.getBoundingRect(absolute).height / this.getScaledHeight();
       return this.scale(value / this.height / boundingRectFactor);
@@ -436,7 +436,7 @@
      * @chainable
      * @deprecated
      */
-    calcCoords: function(absolute) {
+    calcCoords: function (absolute) {
       // this is a compatibility function to avoid removing calcCoords now.
       if (absolute) {
         return this.calcACoords();
@@ -444,12 +444,12 @@
       return this.calcOCoords();
     },
 
-    calcLineCoords: function() {
+    calcLineCoords: function () {
       var vpt = this.getViewportTransform(),
-          padding = this.padding, angle = degreesToRadians(this.angle),
-          cos = util.cos(angle), sin = util.sin(angle),
-          cosP = cos * padding, sinP = sin * padding, cosPSinP = cosP + sinP,
-          cosPMinusSinP = cosP - sinP, aCoords = this.calcACoords();
+        padding = this.padding, angle = degreesToRadians(this.angle),
+        cos = util.cos(angle), sin = util.sin(angle),
+        cosP = cos * padding, sinP = sin * padding, cosPSinP = cosP + sinP,
+        cosPMinusSinP = cosP - sinP, aCoords = this.calcACoords();
 
       var lineCoords = {
         tl: transformPoint(aCoords.tl, vpt),
@@ -472,16 +472,16 @@
       return lineCoords;
     },
 
-    calcOCoords: function() {
+    calcOCoords: function () {
       var rotateMatrix = this._calcRotateMatrix(),
-          translateMatrix = this._calcTranslateMatrix(),
-          vpt = this.getViewportTransform(),
-          startMatrix = multiplyMatrices(vpt, translateMatrix),
-          finalMatrix = multiplyMatrices(startMatrix, rotateMatrix),
-          finalMatrix = multiplyMatrices(finalMatrix, [1 / vpt[0], 0, 0, 1 / vpt[3], 0, 0]),
-          dim = this._calculateCurrentDimensions(),
-          coords = {};
-      this.forEachControl(function(control, key, fabricObject) {
+        translateMatrix = this._calcTranslateMatrix(),
+        vpt = this.getViewportTransform(),
+        startMatrix = multiplyMatrices(vpt, translateMatrix),
+        finalMatrix = multiplyMatrices(startMatrix, rotateMatrix),
+        finalMatrix = multiplyMatrices(finalMatrix, [1 / vpt[0], 0, 0, 1 / vpt[3], 0, 0]),
+        dim = this._calculateCurrentDimensions(),
+        coords = {};
+      this.forEachControl(function (control, key, fabricObject) {
         coords[key] = control.positionHandler(dim, finalMatrix, fabricObject);
       });
 
@@ -498,12 +498,12 @@
       return coords;
     },
 
-    calcACoords: function() {
+    calcACoords: function () {
       var rotateMatrix = this._calcRotateMatrix(),
-          translateMatrix = this._calcTranslateMatrix(),
-          finalMatrix = multiplyMatrices(translateMatrix, rotateMatrix),
-          dim = this._getTransformedDimensions(),
-          w = dim.x / 2, h = dim.y / 2;
+        translateMatrix = this._calcTranslateMatrix(),
+        finalMatrix = multiplyMatrices(translateMatrix, rotateMatrix),
+        dim = this._getTransformedDimensions(),
+        w = dim.x / 2, h = dim.y / 2;
       return {
         // corners
         tl: transformPoint({ x: -w, y: -h }, finalMatrix),
@@ -523,7 +523,7 @@
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    setCoords: function(skipCorners) {
+    setCoords: function (skipCorners) {
       this.aCoords = this.calcACoords();
       // in case we are in a group, for how the inner group target check works,
       // lineCoords are exactly aCoords. Since the vpt gets absorbed by the normalized pointer.
@@ -541,7 +541,7 @@
      * calculate rotation matrix of an object
      * @return {Array} rotation matrix for the object
      */
-    _calcRotateMatrix: function() {
+    _calcRotateMatrix: function () {
       return util.calcRotateMatrix(this);
     },
 
@@ -549,12 +549,12 @@
      * calculate the translation matrix for an object transform
      * @return {Array} rotation matrix for the object
      */
-    _calcTranslateMatrix: function() {
+    _calcTranslateMatrix: function () {
       var center = this.getCenterPoint();
       return [1, 0, 0, 1, center.x, center.y];
     },
 
-    transformMatrixKey: function(skipGroup) {
+    transformMatrixKey: function (skipGroup) {
       var sep = '_', prefix = '';
       if (!skipGroup && this.group) {
         prefix = this.group.transformMatrixKey(skipGroup) + sep;
@@ -571,7 +571,7 @@
      * There are some situation in which this is useful to avoid the fake rotation.
      * @return {Array} transform matrix for the object
      */
-    calcTransformMatrix: function(skipGroup) {
+    calcTransformMatrix: function (skipGroup) {
       var matrix = this.calcOwnMatrix();
       if (skipGroup || !this.group) {
         return matrix;
@@ -593,23 +593,23 @@
      * object's properties, this matrix does not include the group transformation
      * @return {Array} transform matrix for the object
      */
-    calcOwnMatrix: function() {
+    calcOwnMatrix: function () {
       var key = this.transformMatrixKey(true), cache = this.ownMatrixCache || (this.ownMatrixCache = {});
       if (cache.key === key) {
         return cache.value;
       }
       var tMatrix = this._calcTranslateMatrix(),
-          options = {
-            angle: this.angle,
-            translateX: tMatrix[4],
-            translateY: tMatrix[5],
-            scaleX: this.scaleX,
-            scaleY: this.scaleY,
-            skewX: this.skewX,
-            skewY: this.skewY,
-            flipX: this.flipX,
-            flipY: this.flipY,
-          };
+        options = {
+          angle: this.angle,
+          translateX: tMatrix[4],
+          translateY: tMatrix[5],
+          scaleX: this.scaleX,
+          scaleY: this.scaleY,
+          skewX: this.skewX,
+          skewY: this.skewY,
+          flipX: this.flipX,
+          flipY: this.flipY,
+        };
       cache.key = key;
       cache.value = util.composeMatrix(options);
       return cache.value;
@@ -623,7 +623,7 @@
      * @return {Object} .x width dimension
      * @return {Object} .y height dimension
      */
-    _calcDimensionsTransformMatrix: function(skewX, skewY, flipping) {
+    _calcDimensionsTransformMatrix: function (skewX, skewY, flipping) {
       return util.calcDimensionsMatrix({
         skewX: skewX,
         skewY: skewY,
@@ -638,10 +638,10 @@
      * @return {Object} .x width dimension
      * @return {Object} .y height dimension
      */
-    _getNonTransformedDimensions: function() {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0,
-          w = this.width + strokeWidth,
-          h = this.height + strokeWidth;
+    _getNonTransformedDimensions: function () {
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
+        w = this.width + strokeWidth,
+        h = this.height + strokeWidth;
       return { x: w, y: h };
     },
 
@@ -653,7 +653,7 @@
      * @return {Object} .x width dimension
      * @return {Object} .y height dimension
      */
-    _getTransformedDimensions: function(skewX, skewY) {
+    _getTransformedDimensions: function (skewX, skewY) {
       if (typeof skewX === 'undefined') {
         skewX = this.skewX;
       }
@@ -661,7 +661,7 @@
         skewY = this.skewY;
       }
       var dimensions, dimX, dimY,
-          noSkew = skewX === 0 && skewY === 0;
+        noSkew = skewX === 0 && skewY === 0;
 
       if (this.strokeUniform) {
         dimX = this.width;
@@ -692,8 +692,8 @@
      * @return {Object} .x finalized width dimension
      * @return {Object} .y finalized height dimension
      */
-    _finalizeDimensions: function(width, height) {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0;
+    _finalizeDimensions: function (width, height) {
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0;
       return this.strokeUniform ?
         { x: width + strokeWidth, y: height + strokeWidth }
         :
@@ -705,10 +705,10 @@
      * and active selection
      * private
      */
-    _calculateCurrentDimensions: function()  {
+    _calculateCurrentDimensions: function () {
       var vpt = this.getViewportTransform(),
-          dim = this._getTransformedDimensions(),
-          p = transformPoint(dim, vpt, true);
+        dim = this._getTransformedDimensions(),
+        p = transformPoint(dim, vpt, true);
       return p.scalarAdd(2 * this.padding);
     },
   });
