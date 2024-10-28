@@ -639,7 +639,7 @@
      * @return {Object} .y height dimension
      */
     _getNonTransformedDimensions: function() {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0,
+      (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           w = this.width + strokeWidth,
           h = this.height + strokeWidth;
       return { x: w, y: h };
@@ -693,7 +693,7 @@
      * @return {Object} .y finalized height dimension
      */
     _finalizeDimensions: function(width, height) {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0;
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0;
       return this.strokeUniform ?
         { x: width + strokeWidth, y: height + strokeWidth }
         :
