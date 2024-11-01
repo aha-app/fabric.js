@@ -709,17 +709,7 @@
         this._handleGrouping(e, target);
         target = this._activeObject;
       }
-
-      if (this.selection && (!target ||
-        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
-        this._groupSelector = {
-          ex: this._absolutePointer.x,
-          ey: this._absolutePointer.y,
-          top: 0,
-          left: 0
-        };
-        this.fire('groupSelector:created');
-      }
+     
 
       if (target) {
         var alreadySelected = target === this._activeObject;
@@ -741,6 +731,19 @@
           }
         }
       }
+
+      if (this.selection && (!target ||
+        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
+        this._groupSelector = {
+          ex: this._absolutePointer.x,
+          ey: this._absolutePointer.y,
+          top: 0,
+          left: 0
+        };
+        this.fire('groupSelector:created');
+      }
+
+
       this._handleEvent(e, 'down');
       // we must renderAll so that we update the visuals
       (shouldRender || shouldGroup) && this.requestRenderAll();
