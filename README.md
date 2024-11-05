@@ -16,6 +16,7 @@ Changes from the upstream version:
   based updates.
 * When generating a dataURL call _chooseObjectsToRender() to choose the objects
   to render so it can be overridden in sub-classes.
+* Treat a transparent stroke as if there is no stroke.
 * Rearrange the canvas events mixin to fix table cell selecting
 
 <!-- build/coverage status, climate -->

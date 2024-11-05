@@ -13330,17 +13330,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         this._handleGrouping(e, target);
         target = this._activeObject;
       }
-
-      if (this.selection && (!target ||
-        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
-        this._groupSelector = {
-          ex: this._absolutePointer.x,
-          ey: this._absolutePointer.y,
-          top: 0,
-          left: 0
-        };
-        this.fire('groupSelector:created');
-      }
+     
 
       if (target) {
         var alreadySelected = target === this._activeObject;
@@ -13362,6 +13352,19 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           }
         }
       }
+
+      if (this.selection && (!target ||
+        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
+        this._groupSelector = {
+          ex: this._absolutePointer.x,
+          ey: this._absolutePointer.y,
+          top: 0,
+          left: 0
+        };
+        this.fire('groupSelector:created');
+      }
+
+
       this._handleEvent(e, 'down');
       // we must renderAll so that we update the visuals
       (shouldRender || shouldGroup) && this.requestRenderAll();
@@ -17055,7 +17058,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {Object} .y height dimension
      */
     _getNonTransformedDimensions: function() {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0,
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           w = this.width + strokeWidth,
           h = this.height + strokeWidth;
       return { x: w, y: h };
@@ -17109,7 +17112,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {Object} .y finalized height dimension
      */
     _finalizeDimensions: function(width, height) {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0;
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0;
       return this.strokeUniform ?
         { x: width + strokeWidth, y: height + strokeWidth }
         :
@@ -17762,7 +17765,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     drawBordersInGroup: function(ctx, options, styleOverride) {
       styleOverride = styleOverride || {};
       var bbox = fabric.util.sizeAfterTransform(this.width, this.height, options),
-          strokeWidth = this.stroke ? this.strokeWidth : 0,
+          strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           strokeUniform = this.strokeUniform,
           borderScaleFactor = this.borderScaleFactor,
           width =
@@ -20856,7 +20859,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
     _stroke: function(ctx) {
-      if (!this.stroke || this.strokeWidth === 0) {
+      if (!this.stroke || this.stroke === 'transparent' || this.strokeWidth === 0) {
         return;
       }
       var w = this.width / 2, h = this.height / 2;
@@ -20940,7 +20943,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         '"', clipPath,
         '></image>\n');
 
-      if (this.stroke || this.strokeDashArray) {
+        if ((this.stroke && this.stroke !== 'transparent') || this.strokeDashArray) {
         var origFill = this.fill;
         this.fill = null;
         strokeSvg = [
