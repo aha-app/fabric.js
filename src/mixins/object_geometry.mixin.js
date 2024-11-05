@@ -639,7 +639,7 @@
      * @return {Object} .y height dimension
      */
     _getNonTransformedDimensions: function() {
-      (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           w = this.width + strokeWidth,
           h = this.height + strokeWidth;
       return { x: w, y: h };
