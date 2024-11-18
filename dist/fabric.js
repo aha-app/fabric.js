@@ -12111,7 +12111,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      */
     _searchPossibleTargets: function(objects, pointer) {
       // Cache all targets where their bounding box contains point.
-      var target, i = objects.length, subTarget;
+      var target, transparentTarget, i = objects.length, subTarget;
       // Do not check for currently grouped objects, since we check the parent group itself.
       // until we call this function specifically to search inside the activeGroup
       while (i--) {
@@ -12119,6 +12119,11 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         var pointerToUse = objToCheck.group ?
           this._normalizePointer(objToCheck.group, pointer) : pointer;
         if (this._checkTarget(pointerToUse, objToCheck, pointer)) {
+          // Added by aha. Prioritize targets behind a transparent shape
+          if (this._isMaybeTransparent(objToCheck)) {
+            transparentTarget = objToCheck;
+            continue; // Skip transparent targets, prioritizing non transparent ones
+          }
           target = objects[i];
           if (target.subTargetCheck && target instanceof fabric.Group) {
             subTarget = this._searchPossibleTargets(target._objects, pointer);
@@ -12127,7 +12132,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           break;
         }
       }
-      return target;
+      return target || transparentTarget;
     },
 
     /**
@@ -12606,6 +12611,13 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         this._activeObject.clearContextTop();
       }
       fabric.StaticCanvas.prototype.setViewportTransform.call(this, vpt);
+    },
+
+    // Added by aha. Checks if an object is at least partially trasnparent, in
+    // order to prioritize targets behind this object (.e.g, text inside and
+    // behind a slightly transparent square)
+    _isMaybeTransparent: function (object) {
+      return object.fill === 'transparent' || object.opacity < 1;
     }
   });
 
