@@ -12119,7 +12119,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         var pointerToUse = objToCheck.group ?
           this._normalizePointer(objToCheck.group, pointer) : pointer;
         if (this._checkTarget(pointerToUse, objToCheck, pointer)) {
-          // Added by aha. Prioritize targets behind a transparent shape
           if (this._isMaybeTransparent(objToCheck)) {
             transparentTarget = objToCheck;
             continue; // Skip transparent targets, prioritizing non transparent ones
@@ -12132,7 +12131,19 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           break;
         }
       }
-      return target || transparentTarget;
+
+      // Prioritize the sub target if it is fully contained within the tranpsarentTarget
+      if (
+        transparentTarget &&
+        target &&
+        target.isContainedWithinObject(transparentTarget)
+      ) {
+        return target;
+      }
+
+      // Otherwise, we prioritize trasnparentTargets to be consistent with the
+      // order of targets
+      return transparentTarget || target;
     },
 
     /**
