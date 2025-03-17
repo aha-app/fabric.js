@@ -12111,7 +12111,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      */
     _searchPossibleTargets: function(objects, pointer) {
       // Cache all targets where their bounding box contains point.
-      var target, transparentTarget, i = objects.length, subTarget;
+      var target, i = objects.length, subTarget;
       // Do not check for currently grouped objects, since we check the parent group itself.
       // until we call this function specifically to search inside the activeGroup
       while (i--) {
@@ -12119,10 +12119,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         var pointerToUse = objToCheck.group ?
           this._normalizePointer(objToCheck.group, pointer) : pointer;
         if (this._checkTarget(pointerToUse, objToCheck, pointer)) {
-          if (this._isMaybeTransparent(objToCheck)) {
-            transparentTarget = objToCheck;
-            continue; // Skip transparent targets, prioritizing non transparent ones
-          }
           target = objects[i];
           if (target.subTargetCheck && target instanceof fabric.Group) {
             subTarget = this._searchPossibleTargets(target._objects, pointer);
@@ -12132,18 +12128,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         }
       }
 
-      // Prioritize the sub target if it is fully contained within the tranpsarentTarget
-      if (
-        transparentTarget &&
-        target &&
-        target.isContainedWithinObject(transparentTarget)
-      ) {
-        return target;
-      }
-
-      // Otherwise, we prioritize trasnparentTargets to be consistent with the
-      // order of targets
-      return transparentTarget || target;
+      return target;
     },
 
     /**
