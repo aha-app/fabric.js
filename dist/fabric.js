@@ -524,7 +524,7 @@ fabric.Collection = {
   },
 
   /**
-   * Returns the index of the object in the collection, -1 if the object 
+   * Returns the index of the object in the collection, -1 if the object
    * doesn't exist in the collection.
    */
   indexOf: function(object) {
@@ -2739,7 +2739,7 @@ fabric.CommonMethods = {
 
   /**
    * Creates an empty object and copies all enumerable properties of another object to it
-   * This method is mostly for internal use, and not intended for duplicating shapes in canvas. 
+   * This method is mostly for internal use, and not intended for duplicating shapes in canvas.
    * @memberOf fabric.util.object
    * @param {Object} object Object to clone
    * @param {Boolean} [deep] Whether to clone nested objects
@@ -12127,6 +12127,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           break;
         }
       }
+
       return target;
     },
 
@@ -12606,6 +12607,13 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         this._activeObject.clearContextTop();
       }
       fabric.StaticCanvas.prototype.setViewportTransform.call(this, vpt);
+    },
+
+    // Added by aha. Checks if an object is at least partially trasnparent, in
+    // order to prioritize targets behind this object (.e.g, text inside and
+    // behind a slightly transparent square)
+    _isMaybeTransparent: function (object) {
+      return object.fill === 'transparent' || object.opacity < 1;
     }
   });
 
@@ -13335,17 +13343,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         target = this._activeObject;
       }
 
-      if (this.selection && (!target ||
-        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
-        this._groupSelector = {
-          ex: this._absolutePointer.x,
-          ey: this._absolutePointer.y,
-          top: 0,
-          left: 0
-        };
-        this.fire('groupSelector:created');
-      }
-
       if (target) {
         var alreadySelected = target === this._activeObject;
         if (target.selectable && target.activeOn === 'down') {
@@ -13366,6 +13363,19 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           }
         }
       }
+
+      if (this.selection && (!target ||
+        (!target.selectable && !target.isEditing && target !== this._activeObject) || target.allowsDragSelection)) {
+        this._groupSelector = {
+          ex: this._absolutePointer.x,
+          ey: this._absolutePointer.y,
+          top: 0,
+          left: 0
+        };
+        this.fire('groupSelector:created');
+      }
+
+
       this._handleEvent(e, 'down');
       // we must renderAll so that we update the visuals
       (shouldRender || shouldGroup) && this.requestRenderAll();
@@ -17059,7 +17069,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {Object} .y height dimension
      */
     _getNonTransformedDimensions: function() {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0,
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           w = this.width + strokeWidth,
           h = this.height + strokeWidth;
       return { x: w, y: h };
@@ -17113,7 +17123,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {Object} .y finalized height dimension
      */
     _finalizeDimensions: function(width, height) {
-      var strokeWidth = this.stroke ? this.strokeWidth : 0;
+      var strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0;
       return this.strokeUniform ?
         { x: width + strokeWidth, y: height + strokeWidth }
         :
@@ -17766,7 +17776,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     drawBordersInGroup: function(ctx, options, styleOverride) {
       styleOverride = styleOverride || {};
       var bbox = fabric.util.sizeAfterTransform(this.width, this.height, options),
-          strokeWidth = this.stroke ? this.strokeWidth : 0,
+          strokeWidth = (this.stroke && this.stroke !== 'transparent') ? this.strokeWidth : 0,
           strokeUniform = this.strokeUniform,
           borderScaleFactor = this.borderScaleFactor,
           width =
@@ -19916,7 +19926,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
-        this._objects[i].fire("group:added");
+        this._objects[i].fire('group:added');
       }
 
       if (!isAlreadyGrouped) {
@@ -20010,8 +20020,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         this._objects.push(object);
         object.group = this;
         object._set('canvas', this.canvas);
-        object.fire("added");
-        object.fire("group:added");
+        object.fire('added');
+        object.fire('group:added');
       }
       this._calcBounds();
       this._updateObjectsCoords();
@@ -20050,7 +20060,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this.dirty = true;
       object.group = this;
       object._set('canvas', this.canvas);
-      object.fire("group:added");
+      object.fire('group:added');
     },
 
     /**
@@ -20059,7 +20069,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     _onObjectRemoved: function(object) {
       this.dirty = true;
       delete object.group;
-      object.fire("group:removed");
+      object.fire('group:removed');
     },
 
     /**
@@ -20272,7 +20282,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._restoreObjectsState();
       // Let each object know it was removed *after* its state is restored.
       this._objects.forEach(function(object) {
-        object.fire("group:removed");
+        object.fire('group:removed');
       });
       return this;
     },
@@ -20494,7 +20504,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
-        this._objects[i].fire("group:added");
+        this._objects[i].fire('group:added');
       }
 
       if (options.originX) {
@@ -20523,14 +20533,14 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       var newGroup = new fabric.Group([]);
       delete options.type;
       newGroup.set(options);
-      var firstIndex = null
+      var firstIndex = null;
       objects.forEach(function(object) {
-        // We record the *lowest* index of object in the group. We can't use 
+        // We record the *lowest* index of object in the group. We can't use
         // the highest index because in the case of dependent objects, removing
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.
         var objectIndex = object.canvas.indexOf(object);
-        if (!firstIndex || objectIndex < firstIndex) firstIndex = objectIndex;
+        if (!firstIndex || objectIndex < firstIndex) {firstIndex = objectIndex;}
         object.canvas.remove(object);
         object.group = newGroup;
       });
@@ -20860,7 +20870,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
     _stroke: function(ctx) {
-      if (!this.stroke || this.strokeWidth === 0) {
+      if (!this.stroke || this.stroke === 'transparent' || this.strokeWidth === 0) {
         return;
       }
       var w = this.width / 2, h = this.height / 2;
@@ -20944,7 +20954,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         '"', clipPath,
         '></image>\n');
 
-      if (this.stroke || this.strokeDashArray) {
+        if ((this.stroke && this.stroke !== 'transparent') || this.strokeDashArray) {
         var origFill = this.fill;
         this.fill = null;
         strokeSvg = [
@@ -24888,7 +24898,7 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * Saturation value, from -1 to 1.
      * Increases/decreases the color saturation.
      * A value of 0 has no effect.
-     * 
+     *
      * @param {Number} saturation
      * @default
      */
@@ -25010,7 +25020,7 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * Vibrance value, from -1 to 1.
      * Increases/decreases the saturation of more muted colors with less effect on saturated colors.
      * A value of 0 has no effect.
-     * 
+     *
      * @param {Number} vibrance
      * @default
      */

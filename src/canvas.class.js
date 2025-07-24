@@ -839,6 +839,7 @@
           break;
         }
       }
+
       return target;
     },
 
@@ -1318,6 +1319,13 @@
         this._activeObject.clearContextTop();
       }
       fabric.StaticCanvas.prototype.setViewportTransform.call(this, vpt);
+    },
+
+    // Added by aha. Checks if an object is at least partially trasnparent, in
+    // order to prioritize targets behind this object (.e.g, text inside and
+    // behind a slightly transparent square)
+    _isMaybeTransparent: function (object) {
+      return object.fill === 'transparent' || object.opacity < 1;
     }
   });
 

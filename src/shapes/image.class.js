@@ -236,7 +236,7 @@
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
     _stroke: function(ctx) {
-      if (!this.stroke || this.strokeWidth === 0) {
+      if (!this.stroke || this.stroke === 'transparent' || this.strokeWidth === 0) {
         return;
       }
       var w = this.width / 2, h = this.height / 2;
@@ -320,7 +320,7 @@
         '"', clipPath,
         '></image>\n');
 
-      if (this.stroke || this.strokeDashArray) {
+        if ((this.stroke && this.stroke !== 'transparent') || this.strokeDashArray) {
         var origFill = this.fill;
         this.fill = null;
         strokeSvg = [
