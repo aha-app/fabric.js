@@ -74,7 +74,7 @@
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
-        this._objects[i].fire("group:added");
+        this._objects[i].fire('group:added');
       }
 
       if (!isAlreadyGrouped) {
@@ -168,8 +168,8 @@
         this._objects.push(object);
         object.group = this;
         object._set('canvas', this.canvas);
-        object.fire("added");
-        object.fire("group:added");
+        object.fire('added');
+        object.fire('group:added');
       }
       this._calcBounds();
       this._updateObjectsCoords();
@@ -208,7 +208,7 @@
       this.dirty = true;
       object.group = this;
       object._set('canvas', this.canvas);
-      object.fire("group:added");
+      object.fire('group:added');
     },
 
     /**
@@ -217,7 +217,7 @@
     _onObjectRemoved: function(object) {
       this.dirty = true;
       delete object.group;
-      object.fire("group:removed");
+      object.fire('group:removed');
     },
 
     /**
@@ -430,7 +430,7 @@
       this._restoreObjectsState();
       // Let each object know it was removed *after* its state is restored.
       this._objects.forEach(function(object) {
-        object.fire("group:removed");
+        object.fire('group:removed');
       });
       return this;
     },
