@@ -405,9 +405,10 @@
      * @param {Event} e Event object fired on mouseup
      */
     __onMouseUp: function (e) {
+      var groupSelectorPresentWithNoSize = groupSelector && groupSelector.left === 0 && groupSelector.top === 0;
       var target, transform = this._currentTransform,
           groupSelector = this._groupSelector, shouldRender = false,
-          isClick = (!groupSelector || (groupSelector.left === 0 && groupSelector.top === 0));
+          isClick = (!groupSelector || groupSelectorPresentWithNoSize);
       this._cacheTransformEventData(e);
       this._handleEvent(e, 'up:before');
       target = this._target;
@@ -479,7 +480,10 @@
       if (shouldRender) {
         this.requestRenderAll();
       }
-      else if (!isClick) {
+      else if (!isClick || groupSelectorPresentWithNoSize) {
+        // Fires on groupSelectorPresentWithNoSize because if the group
+        // selector was present (and thus rendered), we have to render at
+        // least the top layer to clear it.
         this.renderTop();
       }
     },
