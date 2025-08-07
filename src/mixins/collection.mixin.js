@@ -169,7 +169,7 @@ fabric.Collection = {
   },
 
   /**
-   * Returns the index of the object in the collection, -1 if the object 
+   * Returns the index of the object in the collection, -1 if the object
    * doesn't exist in the collection.
    */
   indexOf: function(object) {

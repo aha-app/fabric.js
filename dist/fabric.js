@@ -524,7 +524,7 @@ fabric.Collection = {
   },
 
   /**
-   * Returns the index of the object in the collection, -1 if the object 
+   * Returns the index of the object in the collection, -1 if the object
    * doesn't exist in the collection.
    */
   indexOf: function(object) {
@@ -2739,7 +2739,7 @@ fabric.CommonMethods = {
 
   /**
    * Creates an empty object and copies all enumerable properties of another object to it
-   * This method is mostly for internal use, and not intended for duplicating shapes in canvas. 
+   * This method is mostly for internal use, and not intended for duplicating shapes in canvas.
    * @memberOf fabric.util.object
    * @param {Object} object Object to clone
    * @param {Boolean} [deep] Whether to clone nested objects
@@ -13034,9 +13034,10 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      * @param {Event} e Event object fired on mouseup
      */
     __onMouseUp: function (e) {
+      var groupSelectorPresentWithNoSize = groupSelector && groupSelector.left === 0 && groupSelector.top === 0;
       var target, transform = this._currentTransform,
           groupSelector = this._groupSelector, shouldRender = false,
-          isClick = (!groupSelector || (groupSelector.left === 0 && groupSelector.top === 0));
+          isClick = (!groupSelector || groupSelectorPresentWithNoSize);
       this._cacheTransformEventData(e);
       this._handleEvent(e, 'up:before');
       target = this._target;
@@ -13108,7 +13109,10 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       if (shouldRender) {
         this.requestRenderAll();
       }
-      else if (!isClick) {
+      else if (!isClick || groupSelectorPresentWithNoSize) {
+        // Fires on groupSelectorPresentWithNoSize because if the group
+        // selector was present (and thus rendered), we have to render at
+        // least the top layer to clear it.
         this.renderTop();
       }
     },
@@ -13338,7 +13342,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
         this._handleGrouping(e, target);
         target = this._activeObject;
       }
-     
 
       if (target) {
         var alreadySelected = target === this._activeObject;
@@ -19923,7 +19926,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
-        this._objects[i].fire("group:added");
+        this._objects[i].fire('group:added');
       }
 
       if (!isAlreadyGrouped) {
@@ -20017,8 +20020,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         this._objects.push(object);
         object.group = this;
         object._set('canvas', this.canvas);
-        object.fire("added");
-        object.fire("group:added");
+        object.fire('added');
+        object.fire('group:added');
       }
       this._calcBounds();
       this._updateObjectsCoords();
@@ -20057,7 +20060,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this.dirty = true;
       object.group = this;
       object._set('canvas', this.canvas);
-      object.fire("group:added");
+      object.fire('group:added');
     },
 
     /**
@@ -20066,7 +20069,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     _onObjectRemoved: function(object) {
       this.dirty = true;
       delete object.group;
-      object.fire("group:removed");
+      object.fire('group:removed');
     },
 
     /**
@@ -20279,7 +20282,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._restoreObjectsState();
       // Let each object know it was removed *after* its state is restored.
       this._objects.forEach(function(object) {
-        object.fire("group:removed");
+        object.fire('group:removed');
       });
       return this;
     },
@@ -20501,7 +20504,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._objects = objects || [];
       for (var i = this._objects.length; i--; ) {
         this._objects[i].group = this;
-        this._objects[i].fire("group:added");
+        this._objects[i].fire('group:added');
       }
 
       if (options.originX) {
@@ -20530,14 +20533,14 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       var newGroup = new fabric.Group([]);
       delete options.type;
       newGroup.set(options);
-      var firstIndex = null
+      var firstIndex = null;
       objects.forEach(function(object) {
-        // We record the *lowest* index of object in the group. We can't use 
+        // We record the *lowest* index of object in the group. We can't use
         // the highest index because in the case of dependent objects, removing
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.
         var objectIndex = object.canvas.indexOf(object);
-        if (!firstIndex || objectIndex < firstIndex) firstIndex = objectIndex;
+        if (!firstIndex || objectIndex < firstIndex) {firstIndex = objectIndex;}
         object.canvas.remove(object);
         object.group = newGroup;
       });
@@ -24895,7 +24898,7 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * Saturation value, from -1 to 1.
      * Increases/decreases the color saturation.
      * A value of 0 has no effect.
-     * 
+     *
      * @param {Number} saturation
      * @default
      */
@@ -25017,7 +25020,7 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * Vibrance value, from -1 to 1.
      * Increases/decreases the saturation of more muted colors with less effect on saturated colors.
      * A value of 0 has no effect.
-     * 
+     *
      * @param {Number} vibrance
      * @default
      */
