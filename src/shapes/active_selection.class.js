@@ -71,7 +71,9 @@
         // one from the collection might also trigger removal of others
         // changing all of the higher indexes.
         var objectIndex = object.canvas.indexOf(object);
-        if (!firstIndex || objectIndex < firstIndex) {firstIndex = objectIndex;}
+        if (!firstIndex || objectIndex < firstIndex) {
+          firstIndex = objectIndex;
+        }
         object.canvas.remove(object);
         object.group = newGroup;
       });
