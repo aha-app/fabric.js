@@ -19,30 +19,11 @@ Changes from the upstream version:
 * Treat a transparent stroke as if there is no stroke.
 * Rearrange the canvas events mixin to fix table cell selecting
 
-<!-- build/coverage status, climate -->
+### Publishing
 
-[![Build Status](https://secure.travis-ci.org/fabricjs/fabric.js.svg?branch=master)](http://travis-ci.org/#!/kangax/fabric.js)
-[![Code Climate](https://d3s6mut3hikguw.cloudfront.net/github/kangax/fabric.js/badges/gpa.svg)](https://codeclimate.com/github/kangax/fabric.js)
-[![Coverage Status](https://coveralls.io/repos/fabricjs/fabric.js/badge.png?branch=master)](https://coveralls.io/r/kangax/fabric.js?branch=master)
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/fabricjs/fabric.js)
+To publish a new version, update the version in package.json and package-lock.json. Then run `npm publish`.
 
-<!-- npm, bower, CDNJS versions, downloads -->
-
-[![Bower version](https://badge.fury.io/bo/fabric.svg)](http://badge.fury.io/bo/fabric)
-[![NPM version](https://badge.fury.io/js/fabric.svg)](http://badge.fury.io/js/fabric)
-[![Downloads per month](https://img.shields.io/npm/dm/fabric.svg)](https://www.npmjs.org/package/fabric)
-[![CDNJS version](https://img.shields.io/cdnjs/v/fabric.js.svg)](https://cdnjs.com/libraries/fabric.js)
-
-<!-- deps status -->
-
-[![Dependency Status](https://david-dm.org/kangax/fabric.js.svg?theme=shields.io)](https://david-dm.org/kangax/fabric.js)
-[![devDependency Status](https://david-dm.org/kangax/fabric.js/dev-status.svg?theme=shields.io)](https://david-dm.org/kangax/fabric.js#info=devDependencies)
-
-<!-- bounties, tips -->
-
-[![Bountysource](https://api.bountysource.com/badge/tracker?tracker_id=23217)](https://www.bountysource.com/trackers/23217-fabric-js?utm_source=23217&utm_medium=shield&utm_campaign=TRACKER_BADGE)
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=kangax&url=http://github.com/kangax/fabric.js&title=Fabric.js&language=&tags=github&category=software)
-
+### About
 
 **Fabric.js** is a framework that makes it easy to work with HTML5 canvas element. It is an **interactive object model** on top of canvas element. It is also an **SVG-to-canvas parser**.
 
