@@ -452,7 +452,7 @@
         }
       }
       if (target) {
-        if (target.selectable && target !== this._activeObject && target.activeOn === 'up') {
+        if (target.selectable && target !== this._activeObject && target.activeOn === 'up' && !this._isSelectionKeyPressed(e)) {
           this.setActiveObject(target, e);
           shouldRender = true;
         }
